@@ -1,0 +1,14 @@
+.root {
+ -fx-background-image: url("/img/background.jpg");
+-fx-font-size: 14;
+}
+
+.button {
+ -fx-background-color: #00c91c;
+}
+
+.text-area {
+ -fx-border-color: yellow;
+ -fx-background-color: #aaffa6;
+
+}

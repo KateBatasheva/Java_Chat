@@ -1,0 +1,17 @@
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<VBox fx:controller="Client.Registration"
+      xmlns:fx="http://javafx.com/fxml">
+    <stylesheets>
+        <URL value="@/css/style.css"/>
+    </stylesheets>
+    <Label text="login"/>
+    <TextField fx:id="tf_loginField" promptText="login" VBox.vgrow="ALWAYS" prefWidth="300"/>
+    <Label text="password"/>
+    <PasswordField fx:id="pf_password" promptText="password" VBox.vgrow="ALWAYS" prefWidth="300"/>
+    <Label text="nick"/>
+    <TextField fx:id="tf_nickField" promptText="nick" VBox.vgrow="ALWAYS" prefWidth="300"/>
+    <TextArea fx:id="ta_mainmessage" editable="false" VBox.vgrow="ALWAYS" prefWidth="300"/>
+    <Button fx:id="B_reg" text="enter" minWidth="60" onMouseClicked="#clickReg"/>
+</VBox>
