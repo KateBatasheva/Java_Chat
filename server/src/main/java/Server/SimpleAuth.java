@@ -41,6 +41,11 @@ private List<UserData> users;
             }
 
     @Override
+    public boolean changeNick(String oldNick, String newNick) throws SQLException {
+        return false;
+    }
+
+    @Override
     public String getNick(String login, String password) {
         for (UserData user : users) {
             if (user.login.equals(login) && user.password.equals(password)){

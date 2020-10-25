@@ -38,13 +38,15 @@ public class ClientManager {
                             if (tocken.length < 4) {
                                 continue;
                             }
+//                            try {
                             boolean b = server.getAuth().registr(tocken[1], tocken[2], tocken[3]);
                             if (b) {
                                 sentMessage(SystemCommands.registrOK.getCode());
-//                                authDB.fill(tocken[1], tocken[2], tocken[3]);
                             } else {
                                 sentMessage(SystemCommands.registrNO.getCode());
                             }
+//                            }
+
                         }
 
                         if (mess.startsWith(SystemCommands.auth.getCode())) {
@@ -77,6 +79,22 @@ public class ClientManager {
                         if (mess.startsWith(SystemCommands.exit.getCode())) {
                             break;
                         }
+                        if (mess.startsWith(SystemCommands.changeNick.getCode())) {
+                            String[] newNick = mess.split("\\s");
+                            if (newNick.length != 2) {
+                                mess = "Invalid request or a new nick contains spaces";
+                            } else {
+                                if (server.getAuth().changeNick(this.getNickname(), newNick[1])) {
+                                sentMessage(SystemCommands.changeNick.getCode() + " " + newNick[1]);
+                                mess = this.getNickname() +" change nick to " + newNick[1];
+                                    this.nick = newNick[1];
+                                    server.castClients();
+                                } else {
+                                    mess = "Failed to change nick. Try again.";
+                                }
+                            }
+//                            ClientManager.this.sentMessage(mess);
+                        }
                         ClientManager receiver = null;
                         if (mess.startsWith(SystemCommands.write.getCode())) {
                             String[] privat = mess.split("\\s");
@@ -93,8 +111,7 @@ public class ClientManager {
                     sentMessage(SystemCommands.exit.getCode());
                     sentMessage(SystemCommands.timeout.getCode());
                     a.printStackTrace();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
@@ -124,6 +141,7 @@ public class ClientManager {
             e.printStackTrace();
         }
     }
+
     public String getNickname() {
         return nick;
     }

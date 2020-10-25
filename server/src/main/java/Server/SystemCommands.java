@@ -3,7 +3,7 @@ package Server;
 public enum SystemCommands {
     exit ("/exit"), auth ("/auth"), authok ("/auth_ok"), write ("/w"),
     clients ("/clients"), register ("/reg"), registrOK ("/regok"), registrNO ("/regno"),
-    timeout("/timeout");
+    timeout("/timeout"), changeNick("/cn");
 
 
     public String getCode() {

@@ -68,9 +68,9 @@ public class Controller implements Initializable {
 
         if (!authentif){
             nick = "";
-            setTittle("Чат пупсиков");
+            setTittle("Sweeties chat");
         } else {
-            setTittle(String.format("Чат пупсиков - [ %s ]", nick));
+            setTittle(String.format("Sweeties chat - [ %s ]", nick));
         }
 
         ta_mainField.clear();
@@ -91,6 +91,11 @@ public class Controller implements Initializable {
     public void mi_close(ActionEvent actionEvent) {
         Platform.runLater(() -> {
             Stage stage = (Stage) b_sent.getScene().getWindow();
+            try {
+                out.writeUTF(SystemCommands.exit.getCode());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             stage.close();
         });
     }
@@ -127,6 +132,10 @@ public class Controller implements Initializable {
                             if (mess.startsWith(SystemCommands.exit.getCode())){
                                 break;
                         }
+                            if (mess.startsWith(SystemCommands.changeNick.getCode())){
+                                String [] tockens = mess.split("\\s");
+                                setTittle(String.format("Чат пупсиков - [ %s ]", tockens[1]));
+                            }
                             if (mess.startsWith(SystemCommands.clients.getCode())){
                                 String [] tockens = mess.split("\\s");
                                 Platform.runLater(()->

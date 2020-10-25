@@ -33,6 +33,7 @@ public Server (){
         e.printStackTrace();
     } finally {
         try {
+            DBautheriszation.disconnect();
             socket.close();
             server.close();
         } catch (IOException e) {
