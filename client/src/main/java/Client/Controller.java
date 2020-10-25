@@ -132,9 +132,10 @@ public class Controller implements Initializable {
                             if (mess.startsWith(SystemCommands.exit.getCode())){
                                 break;
                         }
+                            // 2.*Добавить в сетевой чат возможность смены ника.
                             if (mess.startsWith(SystemCommands.changeNick.getCode())){
                                 String [] tockens = mess.split("\\s");
-                                setTittle(String.format("Чат пупсиков - [ %s ]", tockens[1]));
+                                setTittle(String.format("Sweeties chat - [ %s ]", tockens[1]));
                             }
                             if (mess.startsWith(SystemCommands.clients.getCode())){
                                 String [] tockens = mess.split("\\s");

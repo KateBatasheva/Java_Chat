@@ -1,7 +1,8 @@
 package Server;
 
-import java.io.IOException;
 import java.sql.*;
+
+// 1. Добавить в сетевой чат авторизацию через базу данных SQLite.
 
 public class DBautheriszation implements Autherization {
 
@@ -92,6 +93,8 @@ public class DBautheriszation implements Autherization {
         resultSet.close();
         return true;
     }
+
+    // 2.*Добавить в сетевой чат возможность смены ника.
     @Override
     public boolean changeNick (String oldNick, String newNick) throws SQLException {
         if (oldNick.equals(newNick)){
