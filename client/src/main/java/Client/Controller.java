@@ -16,16 +16,20 @@ import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 
 public class Controller implements Initializable {
     @FXML
     public HBox hb_sendMess;
     @FXML
     public ListView<String> lv_clients;
+    @FXML
+    public MenuItem mi_deleteUsers;
     @FXML
     private TextArea ta_mainField;
     @FXML
@@ -65,6 +69,7 @@ public class Controller implements Initializable {
         hb_sendMess.setManaged(authentif);
         lv_clients.setVisible(authentif);
         lv_clients.setManaged(authentif);
+        mi_deleteUsers.setVisible(!authentif);
 
         if (!authentif){
             nick = "";
@@ -97,6 +102,11 @@ public class Controller implements Initializable {
                 e.printStackTrace();
             }
             stage.close();
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
     public void connect (){
@@ -234,6 +244,29 @@ private void setTittle (String tittle){
         String mes = String.format("%s %s %s %s", SystemCommands.register.getCode(), login, password, nick);
 
         if (socket == null || socket.isClosed()){
+            connect();
+        }
+        try {
+            out.writeUTF(mes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void mi_newWindow(ActionEvent actionEvent) {
+//        new Thread(()->{
+//            Main newMain = new Main();
+//            try {
+//                newMain.start(new Stage());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+    }
+
+    public void mi_delete(ActionEvent actionEvent) {
+        String mes = SystemCommands.deleteUsers.getCode();
+        if (socket == null || socket.isClosed()) {
             connect();
         }
         try {

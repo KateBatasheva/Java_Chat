@@ -9,8 +9,8 @@
     <top>
         <MenuBar>
             <Menu text="Menu">
-                <MenuItem text="New chat"/>
-                <MenuItem text="Settings"/>
+                <MenuItem text="New chat" fx:id="mi_newChat" onAction="#mi_newWindow"/>
+                <MenuItem text="Delete all users" fx:id="mi_deleteUsers" onAction="#mi_delete" visible="true"/>
                 <MenuItem text="Close" fx:id="mi_close" onAction="#mi_close"/>
             </Menu>
         </MenuBar>
