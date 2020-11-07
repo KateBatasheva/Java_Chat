@@ -16,16 +16,20 @@ import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 
 public class Controller implements Initializable {
     @FXML
     public HBox hb_sendMess;
     @FXML
     public ListView<String> lv_clients;
+    @FXML
+    public MenuItem mi_deleteUsers;
     @FXML
     private TextArea ta_mainField;
     @FXML
@@ -53,6 +57,7 @@ public class Controller implements Initializable {
     private boolean authentif;
 
     private String nick;
+    private String login;
     private Stage stage;
     private Stage regStage;
     private Registration registration;
@@ -65,10 +70,13 @@ public class Controller implements Initializable {
         hb_sendMess.setManaged(authentif);
         lv_clients.setVisible(authentif);
         lv_clients.setManaged(authentif);
+        mi_deleteUsers.setVisible(!authentif);
 
         if (!authentif){
             nick = "";
             setTittle("Sweeties chat");
+            History.stop();
+
         } else {
             setTittle(String.format("Sweeties chat - [ %s ]", nick));
         }
@@ -97,6 +105,11 @@ public class Controller implements Initializable {
                 e.printStackTrace();
             }
             stage.close();
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
     public void connect (){
@@ -113,6 +126,8 @@ public class Controller implements Initializable {
                         if (mess.startsWith(SystemCommands.authok.getCode())){
                             nick = mess.split("\\s")[1];
                             setAuthentif(true);
+                            ta_mainField.appendText(History.getLast100LinesOfHistory(login));
+                            History.start(login);
                             break;
                         }
                         if (mess.startsWith(SystemCommands.registrOK.getCode())){
@@ -134,7 +149,7 @@ public class Controller implements Initializable {
                         }
                             if (mess.startsWith(SystemCommands.changeNick.getCode())){
                                 String [] tockens = mess.split("\\s");
-                                setTittle(String.format("Чат пупсиков - [ %s ]", tockens[1]));
+                                setTittle(String.format("Sweeties chat - [ %s ]", tockens[1]));
                             }
                             if (mess.startsWith(SystemCommands.clients.getCode())){
                                 String [] tockens = mess.split("\\s");
@@ -149,6 +164,7 @@ public class Controller implements Initializable {
 
                             } else {
                             ta_mainField.appendText(mess);
+                            History.writeLine(mess);
                         }
                     }
                 }  catch (IOException e) {
@@ -207,7 +223,9 @@ public class Controller implements Initializable {
             connect();
         }
             String mesServ = String.format("/auth %s %s", tf_login.getText().trim(), pf_password.getText().trim());
-            try {
+        login = tf_login.getText().trim();
+
+        try {
                 out.writeUTF(mesServ);
                 pf_password.clear();
             } catch (IOException e) {
@@ -233,6 +251,29 @@ private void setTittle (String tittle){
         String mes = String.format("%s %s %s %s", SystemCommands.register.getCode(), login, password, nick);
 
         if (socket == null || socket.isClosed()){
+            connect();
+        }
+        try {
+            out.writeUTF(mes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void mi_newWindow(ActionEvent actionEvent) {
+//        new Thread(()->{
+//            Main newMain = new Main();
+//            try {
+//                newMain.start(new Stage());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+    }
+
+    public void mi_delete(ActionEvent actionEvent) {
+        String mes = SystemCommands.deleteUsers.getCode();
+        if (socket == null || socket.isClosed()) {
             connect();
         }
         try {

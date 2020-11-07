@@ -6,7 +6,7 @@ import java.util.List;
 
 public class SimpleAuth implements Autherization{
 
-    DBautheriszation dBautheriszation;
+    DBManager dBautheriszation;
 
     private class UserData {
         String login;

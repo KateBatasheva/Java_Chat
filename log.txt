@@ -1,0 +1,18 @@
+ноя 07, 2020 2:39:33 PM java.util.logging.LogManager$RootLogger log
+SEVERE: Server is on
+ноя 07, 2020 2:39:45 PM java.util.logging.LogManager$RootLogger log
+SEVERE: Client is connected, name /127.0.0.1:63540
+ноя 07, 2020 2:48:31 PM java.util.logging.LogManager$RootLogger log
+SEVERE: Server is on
+ноя 07, 2020 2:48:40 PM java.util.logging.LogManager$RootLogger log
+SEVERE: Client is connected, name /127.0.0.1:63614
+ноя 07, 2020 3:12:05 PM java.util.logging.LogManager$RootLogger log
+SEVERE: Server is on
+ноя 07, 2020 3:12:16 PM java.util.logging.LogManager$RootLogger log
+SEVERE: Client is connected, name /127.0.0.1:63701
+ноя 07, 2020 3:13:47 PM java.util.logging.LogManager$RootLogger log
+SEVERE: Server is on
+ноя 07, 2020 3:13:57 PM java.util.logging.LogManager$RootLogger log
+SEVERE: Client is connected, name /127.0.0.1:63717
+ноя 07, 2020 3:13:57 PM java.util.logging.LogManager$RootLogger log
+INFO: Fail register for client /127.0.0.1:63717 with nick 333

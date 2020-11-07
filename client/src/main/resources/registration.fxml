@@ -11,7 +11,7 @@
     <Label text="password"/>
     <PasswordField fx:id="pf_password" promptText="password" VBox.vgrow="ALWAYS" prefWidth="300"/>
     <Label text="nick"/>
-    <TextField fx:id="tf_nickField" promptText="nick" VBox.vgrow="ALWAYS" prefWidth="300"/>
+    <TextField fx:id="tf_nickField" promptText="nick" VBox.vgrow="ALWAYS" prefWidth="300" onAction="#clickReg"/>
     <TextArea fx:id="ta_mainmessage" editable="false" VBox.vgrow="ALWAYS" prefWidth="300"/>
     <Button fx:id="B_reg" text="enter" minWidth="60" onMouseClicked="#clickReg"/>
 </VBox>

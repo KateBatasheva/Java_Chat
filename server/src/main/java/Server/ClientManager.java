@@ -1,13 +1,14 @@
 package Server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.logging.*;
 
 public class ClientManager {
+
     DataInputStream in;
     DataOutputStream out;
     Server server;
@@ -16,8 +17,12 @@ public class ClientManager {
     private String nick;
     private String login;
 
-    private SimpleAuth authUser;
-    private DBautheriszation authDB;
+    FileOutputStream fileOut;
+    InputStreamReader fileIn;
+
+//    History history;
+
+    final int counLastMess = 100;
 
     public ClientManager(Server server, Socket socket) {
         try {
@@ -25,6 +30,9 @@ public class ClientManager {
             this.socket = socket;
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
+//            fileHandler = new FileHandler("log.txt",true);
+//            fileHandler.setFormatter(new SimpleFormatter());
+//            fileHandler.setLevel(Level.INFO);
 
             new Thread(() -> {
                 try {
@@ -38,15 +46,22 @@ public class ClientManager {
                             if (tocken.length < 4) {
                                 continue;
                             }
-//                            try {
                             boolean b = server.getAuth().registr(tocken[1], tocken[2], tocken[3]);
                             if (b) {
                                 sentMessage(SystemCommands.registrOK.getCode());
+                                // ----- //
+                                server.getLogger().info("Client " + socket.getRemoteSocketAddress() + " is registered with nick " + tocken[3]);
+                                // ----- //
                             } else {
                                 sentMessage(SystemCommands.registrNO.getCode());
+                                // ----- //
+                                server.getLogger().info("Fail register for client " + socket.getRemoteSocketAddress() + " with nick " + tocken[3]);
+                                // ----- //
                             }
-//                            }
-
+                        }
+                        if (mess.startsWith(SystemCommands.deleteUsers.getCode())){
+                            DBManager.deleteUsers();
+                            deleteAllFilesFolder ("history");
                         }
 
                         if (mess.startsWith(SystemCommands.auth.getCode())) {
@@ -61,6 +76,29 @@ public class ClientManager {
                                     nick = newNick;
                                     sentMessage(SystemCommands.authok.getCode() + " " + newNick);
                                     server.subscribe(this);
+
+//                                    History hist = new History();
+//                                    hist.history(this);
+//                                    history.createHistory().history(this);
+//                                    File newFile = new File ("history/history_"+ this.getLogin() + ".txt");
+//                                    if (!newFile.exists()){
+//                                        newFile.createNewFile();
+//                                    }
+//                                    fileIn = new InputStreamReader( new FileInputStream("history/history_"+ this.getLogin() + ".txt"), StandardCharsets.UTF_8);
+//                                    StringBuilder sb = new StringBuilder();
+//                                    StringBuilder sbLastMess = new StringBuilder();
+//                                    int count;
+//                                    while ((count = fileIn.read()) !=-1){
+//                                            sb.append((char) count);
+//                                        }
+//                                    fileIn.close();
+//                                    String []lastMess = sb.toString().split("\n");
+//                                    int lastMessCount = Math.min(lastMess.length, counLastMess);
+//                                    for (int i = lastMess.length - lastMessCount; i < lastMess.length; i++) {
+//                                        sbLastMess.append(lastMess[i] + "\n");
+//                                    }
+//                                    this.sentMessage(sbLastMess.toString());
+//                                    fileOut = new FileOutputStream("history/history_"+ this.getLogin() + ".txt", true);
                                     server.castMess(this, null, "*** join chat ***\n");
                                     break;
                                 } else {
@@ -72,9 +110,8 @@ public class ClientManager {
                         }
                     }
                     // work step
-
+                    socket.setSoTimeout(0);
                     while (true) {
-                        socket.setSoTimeout(0);
                         String mess = in.readUTF();
                         if (mess.startsWith(SystemCommands.exit.getCode())) {
                             break;
@@ -83,6 +120,9 @@ public class ClientManager {
                             String[] newNick = mess.split("\\s");
                             if (newNick.length != 2) {
                                 mess = "Invalid request or a new nick contains spaces";
+                                // ----- //
+                                server.getLogger().severe("Failed to change nick for Client " + socket.getRemoteSocketAddress());
+                                // ----- //
                             } else {
                                 if (server.getAuth().changeNick(this.getNickname(), newNick[1])) {
                                 sentMessage(SystemCommands.changeNick.getCode() + " " + newNick[1]);
@@ -91,9 +131,11 @@ public class ClientManager {
                                     server.castClients();
                                 } else {
                                     mess = "Failed to change nick. Try again.";
+                                    // ----- //
+                                    server.getLogger().severe("Failed to change nick for Client " + socket.getRemoteSocketAddress());
+                                    // ----- //
                                 }
                             }
-//                            ClientManager.this.sentMessage(mess);
                         }
                         ClientManager receiver = null;
                         if (mess.startsWith(SystemCommands.write.getCode())) {
@@ -117,8 +159,16 @@ public class ClientManager {
                     throwables.printStackTrace();
                 } finally {
                     server.unsubscribe(this);
-                    server.castMess(this, null, "*** left chat ***\n");
-                    System.out.println("Client is disconnected");
+                    try {
+                        server.castMess(this, null, "*** left chat ***\n");
+                        fileOut.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Client is disconnected, name "+ socket.getRemoteSocketAddress());
+                    // ----- //
+                    server.getLogger().severe("Client is disconnected, name "+ socket.getRemoteSocketAddress());
+                    // ----- //
                     try {
                         socket.close();
                         in.close();
@@ -148,6 +198,11 @@ public class ClientManager {
 
     public String getLogin() {
         return login;
+    }
+
+    public static void deleteAllFilesFolder(String path) {
+        for (File myFile : new File(path).listFiles())
+            if (myFile.isFile()) myFile.delete();
     }
 }
 
