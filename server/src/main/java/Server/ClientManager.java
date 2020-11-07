@@ -49,10 +49,14 @@ public class ClientManager {
                             boolean b = server.getAuth().registr(tocken[1], tocken[2], tocken[3]);
                             if (b) {
                                 sentMessage(SystemCommands.registrOK.getCode());
+                                // ----- //
                                 server.getLogger().info("Client " + socket.getRemoteSocketAddress() + " is registered with nick " + tocken[3]);
+                                // ----- //
                             } else {
                                 sentMessage(SystemCommands.registrNO.getCode());
+                                // ----- //
                                 server.getLogger().info("Fail register for client " + socket.getRemoteSocketAddress() + " with nick " + tocken[3]);
+                                // ----- //
                             }
                         }
                         if (mess.startsWith(SystemCommands.deleteUsers.getCode())){
@@ -116,7 +120,9 @@ public class ClientManager {
                             String[] newNick = mess.split("\\s");
                             if (newNick.length != 2) {
                                 mess = "Invalid request or a new nick contains spaces";
+                                // ----- //
                                 server.getLogger().severe("Failed to change nick for Client " + socket.getRemoteSocketAddress());
+                                // ----- //
                             } else {
                                 if (server.getAuth().changeNick(this.getNickname(), newNick[1])) {
                                 sentMessage(SystemCommands.changeNick.getCode() + " " + newNick[1]);
@@ -125,7 +131,9 @@ public class ClientManager {
                                     server.castClients();
                                 } else {
                                     mess = "Failed to change nick. Try again.";
+                                    // ----- //
                                     server.getLogger().severe("Failed to change nick for Client " + socket.getRemoteSocketAddress());
+                                    // ----- //
                                 }
                             }
                         }
@@ -158,7 +166,9 @@ public class ClientManager {
                         e.printStackTrace();
                     }
                     System.out.println("Client is disconnected, name "+ socket.getRemoteSocketAddress());
+                    // ----- //
                     server.getLogger().severe("Client is disconnected, name "+ socket.getRemoteSocketAddress());
+                    // ----- //
                     try {
                         socket.close();
                         in.close();

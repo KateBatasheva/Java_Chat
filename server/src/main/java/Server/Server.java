@@ -12,17 +12,17 @@ import java.util.logging.*;
 public class Server {
     private List<ClientManager> clients;
     private Autherization auth;
-
+    // ----- //
     public Logger getLogger() {
         return logger;
     }
-
     public static final Logger logger = Logger.getLogger("");
 
-
     Handler fileHandler;
-
+    // ----- //
     public Server() {
+        // ----- //
+
         try {
             fileHandler = new FileHandler("log.txt",true);
             fileHandler.setFormatter(new SimpleFormatter());
@@ -32,12 +32,15 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // ----- //
 
         clients = new CopyOnWriteArrayList<>();
         try {
             new DBManager();
         } catch (Exception e) {
+            // ----- //
             logger.severe("Fail connection to DB");
+            // ----- //
             throw new RuntimeException("Fail connection to DB");
         }
 
@@ -50,13 +53,16 @@ public class Server {
         try {
             server = new ServerSocket(Port);
             System.out.println("Server is on");
+            // ----- //
             logger.severe("Server is on");
-
+            // ----- //
 
             while (true) {
                 socket = server.accept();
                 System.out.println("Client is connected, name " + socket.getRemoteSocketAddress());
+                // ----- //
                 logger.severe("Client is connected, name " + socket.getRemoteSocketAddress());
+                // ----- //
                 new ClientManager(this, socket);
             }
 
