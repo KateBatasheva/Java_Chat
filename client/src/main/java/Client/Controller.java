@@ -57,6 +57,7 @@ public class Controller implements Initializable {
     private boolean authentif;
 
     private String nick;
+    private String login;
     private Stage stage;
     private Stage regStage;
     private Registration registration;
@@ -74,6 +75,8 @@ public class Controller implements Initializable {
         if (!authentif){
             nick = "";
             setTittle("Sweeties chat");
+            History.stop();
+
         } else {
             setTittle(String.format("Sweeties chat - [ %s ]", nick));
         }
@@ -123,6 +126,8 @@ public class Controller implements Initializable {
                         if (mess.startsWith(SystemCommands.authok.getCode())){
                             nick = mess.split("\\s")[1];
                             setAuthentif(true);
+                            ta_mainField.appendText(History.getLast100LinesOfHistory(login));
+                            History.start(login);
                             break;
                         }
                         if (mess.startsWith(SystemCommands.registrOK.getCode())){
@@ -142,7 +147,6 @@ public class Controller implements Initializable {
                             if (mess.startsWith(SystemCommands.exit.getCode())){
                                 break;
                         }
-                            // 2.*Добавить в сетевой чат возможность смены ника.
                             if (mess.startsWith(SystemCommands.changeNick.getCode())){
                                 String [] tockens = mess.split("\\s");
                                 setTittle(String.format("Sweeties chat - [ %s ]", tockens[1]));
@@ -160,6 +164,7 @@ public class Controller implements Initializable {
 
                             } else {
                             ta_mainField.appendText(mess);
+                            History.writeLine(mess);
                         }
                     }
                 }  catch (IOException e) {
@@ -218,7 +223,9 @@ public class Controller implements Initializable {
             connect();
         }
             String mesServ = String.format("/auth %s %s", tf_login.getText().trim(), pf_password.getText().trim());
-            try {
+        login = tf_login.getText().trim();
+
+        try {
                 out.writeUTF(mesServ);
                 pf_password.clear();
             } catch (IOException e) {
